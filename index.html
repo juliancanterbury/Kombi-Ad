@@ -90,20 +90,33 @@
   /* ---------- hero ---------- */
   .hero{
     position:relative;
-    padding:20px 0 40px;
-    background:
-      radial-gradient(120% 90% at 50% -10%, var(--bg-deep) 0%, var(--bg) 55%);
+    height:100svh; min-height:520px;
+    overflow:hidden;
+    background:var(--bg-deep);
   }
-  .hero::before{ /* horizon strip */
-    content:"";
-    position:absolute; left:0; right:0; bottom:0; height:38%;
-    background:linear-gradient(180deg, transparent 0%, var(--bg-deep) 60%);
-    pointer-events:none;
+
+  .scenery{ position:absolute; inset:0; z-index:0; overflow:hidden; }
+  .scenery-track{
+    display:flex; height:100%; width:max-content;
+    animation:drive 60s linear infinite; will-change:transform;
   }
+  .scenery-svg{ height:100%; width:auto; display:block; flex:none; }
+  @keyframes drive{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+
+  .hero-scrim{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:linear-gradient(180deg,
+      rgba(16,24,27,.60) 0%, rgba(16,24,27,.08) 28%,
+      rgba(16,24,27,.05) 62%, rgba(16,24,27,.65) 100%);
+  }
+
   .eyebrow{
     display:flex; align-items:center; gap:10px;
     justify-content:center;
-    margin:6px 0 18px;
+    margin:0 0 16px;
   }
   .eyebrow .plate{
     font-family:'Plus Jakarta Sans', sans-serif;
@@ -113,25 +126,31 @@
     padding:5px 10px;
   }
   .eyebrow .tag{
-    font-weight:700; font-size:12px; letter-spacing:.2em;
-    color:var(--sunset-deep);
+    font-weight:800; font-size:12px; letter-spacing:.2em;
+    color:var(--sunset); background:rgba(16,24,27,.5);
+    border:1px solid rgba(255,255,255,.3); border-radius:999px;
+    padding:6px 12px;
   }
 
   .hero h1{
-    margin:0; text-align:center; font-size:clamp(34px,9vw,52px);
-    line-height:1.05; color:var(--ink);
+    margin:0; text-align:center; font-size:clamp(32px,8.6vw,50px);
+    line-height:1.05; color:#fff;
+    text-shadow:0 4px 22px rgba(10,16,19,.45);
   }
-  .hero h1 span{ color:var(--sky-deep); }
+  .hero h1 span{ color:var(--sky); }
   .hero .subtitle{
     text-align:center; margin:10px auto 0; max-width:32ch;
-    color:var(--ink-soft); font-size:16px; font-weight:600;
+    color:rgba(255,255,255,.88); font-size:16px; font-weight:600;
+    text-shadow:0 2px 14px rgba(10,16,19,.4);
   }
 
   .van-stage{
-    position:relative; margin:22px auto 6px; max-width:520px;
+    position:absolute; left:50%; bottom:17%; z-index:2;
+    transform:translateX(-50%);
+    width:min(58%,460px); pointer-events:none;
   }
   .van-stage svg{ display:block; width:100%; height:auto; }
-  .van-float{ animation:float 4.5s ease-in-out infinite; transform-origin:50% 50%; }
+  .van-float{ animation:float 4.5s ease-in-out infinite; transform-origin:50% 50%; filter:drop-shadow(0 20px 26px rgba(10,16,19,.35)); }
   @keyframes float{
     0%,100%{ transform:translateY(0); }
     50%{ transform:translateY(-7px); }
@@ -144,7 +163,7 @@
     color:#fff;
     border-radius:14px;
     padding:10px 16px;
-    box-shadow:0 10px 22px -8px var(--shadow);
+    box-shadow:0 10px 22px -8px rgba(10,16,19,.5);
     text-align:center;
     border:3px solid var(--surface);
     white-space:nowrap;
@@ -157,9 +176,16 @@
     font-variant-numeric:tabular-nums;
   }
 
+  .hero-content{
+    position:relative; z-index:3; height:100%;
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:clamp(20px,5vh,40px) 24px calc(clamp(20px,5vh,40px) + env(safe-area-inset-bottom));
+  }
+  .hero-bottom{ display:flex; flex-direction:column; align-items:center; gap:16px; }
+
   .cta{
     display:flex; flex-direction:column; gap:12px;
-    max-width:380px; margin:28px auto 0;
+    max-width:380px; width:100%; margin:0 auto;
   }
   .btn{
     display:flex; align-items:center; justify-content:center; gap:10px;
@@ -180,11 +206,15 @@
     border:2px solid var(--sky-deep);
     font-size:15px; padding:12px 20px;
   }
+  .hero .btn-text{
+    background:rgba(255,255,255,.14); color:#fff;
+    border-color:rgba(255,255,255,.6);
+  }
   .btn svg{ width:22px; height:22px; flex:none; }
 
   .scroll-cue{
     display:flex; flex-direction:column; align-items:center; gap:6px;
-    margin:40px auto 0; color:var(--ink-soft);
+    color:rgba(255,255,255,.85);
     font-size:11px; font-weight:700; letter-spacing:.18em;
     text-decoration:none;
   }
@@ -319,90 +349,227 @@
 
 <main>
 
-  <section class="hero">
-    <div class="wrap">
+  <section class="hero" id="top">
 
-      <div class="eyebrow">
-        <span class="plate">AIR&#8209;COOLED</span>
-        <span class="tag">FOR SALE</span> <!-- EDIT: sale type -->
+    <div class="scenery" aria-hidden="true">
+      <div class="scenery-track">
+        <svg class="scenery-svg" viewBox="0 0 6000 900" preserveAspectRatio="xMidYMax slice"><use href="#scenery-content"/></svg>
+        <svg class="scenery-svg" viewBox="0 0 6000 900" preserveAspectRatio="xMidYMax slice"><use href="#scenery-content"/></svg>
+      </div>
+    </div>
+    <div class="hero-scrim"></div>
+
+    <div class="van-stage">
+      <div class="price-stamp">
+        <span class="label">ASKING</span>
+        <span class="amount">$19,990</span> <!-- EDIT: price -->
+      </div>
+      <svg class="van-float" viewBox="0 0 640 300" role="img" aria-label="Illustration of the light blue and white VW Kombi campervan driving through the countryside">
+        <use href="#kombi-base"/>
+      </svg>
+    </div>
+
+    <div class="hero-content wrap">
+      <div class="hero-top">
+        <div class="eyebrow">
+          <span class="plate">AIR&#8209;COOLED</span>
+          <span class="tag">FOR SALE</span> <!-- EDIT: sale type -->
+        </div>
+        <h1>Classic VW <span>Kombi</span></h1> <!-- EDIT: headline -->
+        <p class="subtitle">Bay&#8209;window pop&#8209;top campervan, ready for its next road trip.</p>
       </div>
 
-      <h1>Classic VW <span>Kombi</span></h1> <!-- EDIT: headline -->
-      <p class="subtitle">Bay&#8209;window pop&#8209;top campervan, ready for its next road trip.</p>
-
-      <div class="van-stage">
-        <div class="price-stamp">
-          <span class="label">ASKING</span>
-          <span class="amount">$19,990</span> <!-- EDIT: price -->
+      <div class="hero-bottom">
+        <div class="cta">
+          <a class="btn btn-call" href="tel:+61400123456"> <!-- EDIT: phone href -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span class="num">Call 0400 123 456</span> <!-- EDIT: phone display -->
+          </a>
+          <a class="btn btn-text" href="sms:+61400123456">Prefer a text? Send a message</a> <!-- EDIT: phone href -->
         </div>
 
-        <svg class="van-float" viewBox="0 0 640 300" role="img" aria-label="Illustration of the light blue and white VW Kombi campervan">
-          <defs>
-            <linearGradient id="skyBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="var(--sky)"/>
-              <stop offset="1" stop-color="var(--sky-deep)"/>
-            </linearGradient>
-          </defs>
-          <ellipse cx="320" cy="272" rx="230" ry="14" fill="rgba(20,30,34,.16)"/>
-          <!-- roof rack -->
-          <rect x="140" y="70" width="300" height="6" rx="3" fill="var(--ink-soft)"/>
-          <rect x="150" y="58" width="8" height="14" rx="2" fill="var(--ink-soft)"/>
-          <rect x="330" y="58" width="8" height="14" rx="2" fill="var(--ink-soft)"/>
-          <!-- roof cap -->
-          <rect x="92" y="78" width="430" height="26" rx="13" fill="var(--surface)"/>
-          <!-- body -->
-          <rect x="70" y="98" width="474" height="130" rx="34" fill="url(#skyBody)"/>
-          <!-- lower skirt -->
-          <rect x="70" y="200" width="474" height="42" rx="18" fill="var(--surface)"/>
-          <!-- belt trim -->
-          <rect x="70" y="198" width="474" height="6" fill="var(--sand)"/>
-          <!-- windshield -->
-          <rect x="98" y="118" width="102" height="68" rx="12" fill="var(--glass)"/>
-          <rect x="106" y="124" width="30" height="20" rx="6" fill="rgba(255,255,255,.25)"/>
-          <!-- side window -->
-          <rect x="252" y="118" width="230" height="62" rx="12" fill="var(--glass)"/>
-          <rect x="264" y="124" width="50" height="18" rx="6" fill="rgba(255,255,255,.18)"/>
-          <!-- mirror -->
-          <rect x="196" y="112" width="16" height="7" rx="3" fill="var(--ink)"/>
-          <!-- VW badge -->
-          <circle cx="118" cy="152" r="17" fill="var(--surface)" stroke="var(--sky-deep)" stroke-width="3"/>
-          <circle cx="118" cy="152" r="6" fill="var(--sky-deep)"/>
-          <!-- headlight -->
-          <circle cx="86" cy="190" r="11" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/>
-          <circle cx="86" cy="190" r="4" fill="var(--sand)"/>
-          <!-- bumper / roo bar -->
-          <rect x="52" y="222" width="150" height="13" rx="6.5" fill="#C9CFD2"/>
-          <circle cx="70" cy="219" r="6" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
-          <circle cx="92" cy="219" r="6" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
-          <!-- door line -->
-          <line x1="238" y1="104" x2="238" y2="238" stroke="rgba(28,43,48,.18)" stroke-width="3"/>
-          <line x1="240" y1="238" x2="500" y2="238" stroke="rgba(28,43,48,.12)" stroke-width="3"/>
-          <!-- wheels -->
-          <circle cx="196" cy="248" r="34" fill="var(--ink)"/>
-          <circle cx="196" cy="248" r="15" fill="var(--surface)"/>
-          <circle cx="454" cy="248" r="34" fill="var(--ink)"/>
-          <circle cx="454" cy="248" r="15" fill="var(--surface)"/>
-          <!-- spare on nose -->
-          <circle cx="558" cy="188" r="20" fill="none" stroke="var(--ink)" stroke-width="7"/>
-          <circle cx="558" cy="188" r="9" fill="var(--surface)"/>
-        </svg>
-      </div>
-
-      <div class="cta">
-        <a class="btn btn-call" href="tel:+61400123456"> <!-- EDIT: phone href -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          <span class="num">Call 0400 123 456</span> <!-- EDIT: phone display -->
+        <a class="scroll-cue" href="#gallery">
+          <span>SEE MORE PHOTOS</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
         </a>
-        <a class="btn btn-text" href="sms:+61400123456">Prefer a text? Send a message</a> <!-- EDIT: phone href -->
       </div>
-
-      <a class="scroll-cue" href="#gallery">
-        <span>SEE MORE PHOTOS</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-      </a>
-
     </div>
   </section>
+
+  <!-- reusable scrolling backdrop: beach, city, freeway, eucalypt forest, desert -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="scenery-content" viewBox="0 0 6000 900">
+      <defs>
+        <linearGradient id="beachSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#4FA9C6"/><stop offset="1" stop-color="#BFE7F1"/>
+        </linearGradient>
+        <linearGradient id="citySky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#8FD3E4"/><stop offset="1" stop-color="#E4DCC8"/>
+        </linearGradient>
+        <linearGradient id="freewaySky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6EC6E0"/><stop offset="1" stop-color="#DCEEF2"/>
+        </linearGradient>
+        <linearGradient id="forestSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7FB7A0"/><stop offset="1" stop-color="#D8E9CE"/>
+        </linearGradient>
+        <linearGradient id="desertSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#F1C177"/><stop offset="1" stop-color="#F7DCA8"/>
+        </linearGradient>
+      </defs>
+
+      <!-- 1. beach -->
+      <g>
+        <rect width="1200" height="660" fill="url(#beachSky)"/>
+        <circle cx="970" cy="150" r="66" fill="#F7C77E"/>
+        <path d="M0,320 q40,-16 80,0 t80,0 t80,0 t80,0" stroke="#fff" stroke-width="5" fill="none" opacity=".35"/>
+        <rect y="430" width="1200" height="230" fill="#2E8FA6"/>
+        <path d="M0,470 q40,-16 80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0" stroke="#BFE7F1" stroke-width="6" fill="none" opacity=".55"/>
+        <path d="M0,560 q40,-14 80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0 t80,0" stroke="#BFE7F1" stroke-width="5" fill="none" opacity=".4"/>
+        <g transform="translate(300,505) rotate(-10)">
+          <ellipse cx="0" cy="0" rx="36" ry="9" fill="#F4EFE2"/>
+          <circle cx="2" cy="-27" r="9" fill="#1C2B30"/>
+          <line x1="2" y1="-18" x2="2" y2="-3" stroke="#1C2B30" stroke-width="6" stroke-linecap="round"/>
+          <line x1="2" y1="-14" x2="-12" y2="-6" stroke="#1C2B30" stroke-width="6" stroke-linecap="round"/>
+          <line x1="2" y1="-14" x2="16" y2="-8" stroke="#1C2B30" stroke-width="6" stroke-linecap="round"/>
+        </g>
+        <g transform="translate(760,540) rotate(7)">
+          <ellipse cx="0" cy="0" rx="34" ry="8" fill="#F4EFE2"/>
+          <circle cx="-2" cy="-25" r="9" fill="#1C2B30"/>
+          <line x1="-2" y1="-16" x2="-2" y2="-2" stroke="#1C2B30" stroke-width="6" stroke-linecap="round"/>
+          <line x1="-2" y1="-13" x2="-16" y2="-6" stroke="#1C2B30" stroke-width="6" stroke-linecap="round"/>
+          <line x1="-2" y1="-13" x2="12" y2="-7" stroke="#1C2B30" stroke-width="6" stroke-linecap="round"/>
+        </g>
+        <rect y="660" width="1200" height="60" fill="#E7C99B"/>
+        <g transform="translate(130,660)">
+          <rect x="-7" y="-72" width="14" height="72" rx="5" fill="#8A6B4B"/>
+          <path d="M0,-72 q-42,-18 -74,-4" stroke="#4C8A5E" stroke-width="11" fill="none" stroke-linecap="round"/>
+          <path d="M0,-72 q42,-18 74,-4" stroke="#4C8A5E" stroke-width="11" fill="none" stroke-linecap="round"/>
+          <path d="M0,-72 q-8,-32 8,-54" stroke="#4C8A5E" stroke-width="11" fill="none" stroke-linecap="round"/>
+        </g>
+        <g transform="translate(1080,660) scale(.8)">
+          <rect x="-7" y="-72" width="14" height="72" rx="5" fill="#8A6B4B"/>
+          <path d="M0,-72 q-42,-18 -74,-4" stroke="#4C8A5E" stroke-width="11" fill="none" stroke-linecap="round"/>
+          <path d="M0,-72 q42,-18 74,-4" stroke="#4C8A5E" stroke-width="11" fill="none" stroke-linecap="round"/>
+          <path d="M0,-72 q-8,-32 8,-54" stroke="#4C8A5E" stroke-width="11" fill="none" stroke-linecap="round"/>
+        </g>
+      </g>
+
+      <!-- 2. city -->
+      <g transform="translate(1200,0)">
+        <rect width="1200" height="660" fill="url(#citySky)"/>
+        <g fill="#9FB3BA">
+          <rect x="40" y="380" width="90" height="280"/>
+          <rect x="150" y="330" width="70" height="330"/>
+          <rect x="980" y="360" width="80" height="300"/>
+          <rect x="1090" y="300" width="60" height="360"/>
+        </g>
+        <g fill="#274752">
+          <rect x="260" y="220" width="120" height="440"/>
+          <rect x="400" y="150" width="90" height="510"/>
+          <rect x="510" y="260" width="140" height="400"/>
+          <rect x="680" y="190" width="100" height="470"/>
+          <rect x="800" y="300" width="150" height="360"/>
+        </g>
+        <line x1="445" y1="150" x2="445" y2="96" stroke="#274752" stroke-width="6"/>
+        <g fill="#F1DDB0" opacity=".85">
+          <rect x="280" y="260" width="10" height="14"/><rect x="310" y="260" width="10" height="14"/>
+          <rect x="280" y="300" width="10" height="14"/><rect x="340" y="300" width="10" height="14"/>
+          <rect x="420" y="200" width="10" height="14"/><rect x="450" y="230" width="10" height="14"/>
+          <rect x="700" y="230" width="10" height="14"/><rect x="730" y="260" width="10" height="14"/>
+          <rect x="820" y="340" width="10" height="14"/><rect x="860" y="370" width="10" height="14"/>
+        </g>
+        <rect y="660" width="1200" height="60" fill="#C7CBC9"/>
+        <g transform="translate(600,660)">
+          <rect x="-4" y="-92" width="8" height="92" fill="#3A4448"/>
+          <circle cx="0" cy="-94" r="10" fill="#F1DDB0"/>
+        </g>
+      </g>
+
+      <!-- 3. freeway -->
+      <g transform="translate(2400,0)">
+        <rect width="1200" height="660" fill="url(#freewaySky)"/>
+        <path d="M0,560 Q200,480 400,540 T800,530 T1200,558 L1200,660 L0,660 Z" fill="#AEDCE6"/>
+        <g>
+          <rect x="150" y="260" width="14" height="200" fill="#8B9599"/>
+          <rect x="900" y="260" width="14" height="200" fill="#8B9599"/>
+          <rect x="140" y="248" width="784" height="20" rx="4" fill="#8B9599"/>
+          <rect x="220" y="255" width="160" height="58" rx="6" fill="#2E7E9C"/>
+          <rect x="420" y="255" width="200" height="58" rx="6" fill="#2E7E9C"/>
+        </g>
+        <rect x="600" y="600" width="76" height="32" rx="9" fill="#E8632C"/>
+        <circle cx="618" cy="632" r="10" fill="#1C2B30"/><circle cx="658" cy="632" r="10" fill="#1C2B30"/>
+        <rect x="770" y="612" width="64" height="28" rx="9" fill="#F4EFE2"/>
+        <circle cx="786" cy="640" r="9" fill="#1C2B30"/><circle cx="822" cy="640" r="9" fill="#1C2B30"/>
+        <rect y="660" width="1200" height="60" fill="#B9BDB6"/>
+        <g transform="translate(1080,660)">
+          <rect x="-5" y="-58" width="10" height="58" fill="#F4EFE2"/>
+          <rect x="-5" y="-58" width="10" height="14" fill="#E8632C"/>
+        </g>
+      </g>
+
+      <!-- 4. eucalypt forest -->
+      <g transform="translate(3600,0)">
+        <rect width="1200" height="660" fill="url(#forestSky)"/>
+        <g opacity=".55">
+          <g transform="translate(90,660)">
+            <rect x="-6" y="-220" width="12" height="220" rx="5" fill="#C9C0AC"/>
+            <ellipse cx="-14" cy="-230" rx="34" ry="16" fill="#9DBDA0"/>
+            <ellipse cx="16" cy="-250" rx="30" ry="14" fill="#9DBDA0"/>
+          </g>
+          <g transform="translate(1130,660) scale(.85)">
+            <rect x="-6" y="-220" width="12" height="220" rx="5" fill="#C9C0AC"/>
+            <ellipse cx="-14" cy="-230" rx="34" ry="16" fill="#9DBDA0"/>
+            <ellipse cx="16" cy="-250" rx="30" ry="14" fill="#9DBDA0"/>
+          </g>
+        </g>
+        <g transform="translate(260,660)">
+          <rect x="-8" y="-320" width="16" height="320" rx="6" fill="#B79E78"/>
+          <ellipse cx="-28" cy="-330" rx="46" ry="20" fill="#6E8F6B"/>
+          <ellipse cx="22" cy="-355" rx="40" ry="18" fill="#6E8F6B"/>
+          <ellipse cx="-6" cy="-375" rx="34" ry="15" fill="#7DA079"/>
+        </g>
+        <g transform="translate(540,660) scale(1.1)">
+          <rect x="-9" y="-300" width="18" height="300" rx="6" fill="#B79E78"/>
+          <ellipse cx="-30" cy="-310" rx="50" ry="22" fill="#6E8F6B"/>
+          <ellipse cx="26" cy="-334" rx="44" ry="19" fill="#6E8F6B"/>
+          <ellipse cx="-4" cy="-356" rx="36" ry="16" fill="#7DA079"/>
+        </g>
+        <g transform="translate(820,660)">
+          <rect x="-8" y="-340" width="16" height="340" rx="6" fill="#B79E78"/>
+          <ellipse cx="-26" cy="-350" rx="46" ry="20" fill="#6E8F6B"/>
+          <ellipse cx="24" cy="-374" rx="40" ry="18" fill="#6E8F6B"/>
+          <ellipse cx="-4" cy="-394" rx="32" ry="14" fill="#7DA079"/>
+        </g>
+        <g transform="translate(1000,660) scale(.9)">
+          <rect x="-8" y="-260" width="16" height="260" rx="6" fill="#B79E78"/>
+          <ellipse cx="-24" cy="-270" rx="40" ry="18" fill="#6E8F6B"/>
+          <ellipse cx="20" cy="-292" rx="36" ry="16" fill="#7DA079"/>
+        </g>
+        <rect y="660" width="1200" height="60" fill="#B7A77E"/>
+      </g>
+
+      <!-- 5. desert -->
+      <g transform="translate(4800,0)">
+        <rect width="1200" height="660" fill="url(#desertSky)"/>
+        <circle cx="200" cy="140" r="58" fill="#F7C77E"/>
+        <path d="M700,660 L760,480 L840,480 L900,660 Z" fill="#C97B4A"/>
+        <path d="M900,660 L940,540 L1000,540 L1040,660 Z" fill="#D8874F"/>
+        <path d="M0,660 Q150,560 300,620 T600,610 T900,630 T1200,600 L1200,660 Z" fill="#E0A15E"/>
+        <path d="M0,660 Q200,600 400,650 T800,645 T1200,650 L1200,660 Z" fill="#D8874F"/>
+        <g stroke="#8A5A34" stroke-width="4" stroke-linecap="round" opacity=".7">
+          <path d="M160,656 l-14,-22 M160,656 l0,-26 M160,656 l14,-22"/>
+          <path d="M420,658 l-12,-20 M420,658 l0,-24 M420,658 l12,-20"/>
+          <path d="M960,656 l-14,-22 M960,656 l0,-26 M960,656 l14,-22"/>
+        </g>
+        <rect y="660" width="1200" height="60" fill="#C9764B"/>
+      </g>
+
+      <!-- shared road -->
+      <rect x="0" y="720" width="6000" height="180" fill="#42474A"/>
+      <line x1="0" y1="762" x2="6000" y2="762" stroke="#2E3234" stroke-width="4"/>
+      <line x1="0" y1="810" x2="6000" y2="810" stroke="#F1E6CC" stroke-width="10" stroke-dasharray="90 70"/>
+    </symbol>
+  </svg>
 
   <div class="gallery-intro">
     <h2>Take a closer look</h2>
